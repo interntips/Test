@@ -10,18 +10,26 @@
             padding: 0; 
             width: 100%; 
             height: 100%; 
-            overflow: auto; 
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden; /* Hindrar dubbla scrollister på skärmen */
         }
         .wrapper {
             width: 100%;
             height: 100vh;
-            display: block;
+            position: relative;
+            overflow: auto; /* Aktiverar mjuk scroll för både dator och mobil */
+            -webkit-overflow-scrolling: touch;
         }
         iframe { 
             width: 100%; 
             height: 100%; 
             border: none; 
+            display: block;
+        }
+        
+        /* Detta förhindrar att man råkar markera låsta celler vid touch/drag */
+        iframe {
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -36,4 +44,3 @@
 
 </body>
 </html>
-
