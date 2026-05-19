@@ -2,45 +2,31 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Excel Webbvy med Zoom och Scroll</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Excel Webbvy</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #f3f2f1;
-        }
-
-        /* Viewporten ligger helt stilla och agerar fönster */
-        #viewport {
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* Tillåter scroll i alla riktningar */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
             -webkit-overflow-scrolling: touch;
+        }
+        .wrapper {
+            width: 100%;
+            height: 100vh;
+            display: block;
             position: relative;
         }
-
-        /* Zoom-lagret bär på den stora fasta tabellen */
-        #zoom-layer {
-            transform-origin: 0 0;
-            transition: transform 0.05s ease-out;
-            /* ÄNDRING: Här sätter vi fasta mått på arket så det faktiskt GÅR att scrolla */
-            width: 2800px;  /* Anpassa efter hur bred din B3:CA97-tabell är */
-            height: 1850px; /* Höjden för ca 95 rader */
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
         }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        /* Skölden täcker hela det stora området och tar alla touch-events */
-        #touch-shield {
+        
+        /* Skölden som ligger över Excel och tvingar fram scroll-läge */
+        .touch-shield {
             position: absolute;
             top: 0;
             left: 0;
@@ -53,81 +39,47 @@
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="zoom-layer">
-            <div id="touch-shield"></div>
-            <iframe 
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-            </iframe>
-        </div>
+    <div class="wrapper">
+        <div class="touch-shield" id="shield"></div>
+
+        <iframe 
+            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+        </iframe>
     </div>
 
     <script>
-        const shield = document.getElementById('touch-shield');
-        const zoomLayer = document.getElementById('zoom-layer');
-        
+        const shield = document.getElementById('shield');
         let moved = false;
-        let scale = 1;
-        let startDist = 0;
 
-        // Starta touch
-        shield.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                moved = false;
-            } else if (e.touches.length === 2) {
-                startDist = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-            }
+        shield.addEventListener('touchstart', function() {
+            moved = false;
         }, { passive: true });
 
-        // Touch rör sig
-        shield.addEventListener('touchmove', function(e) {
-            // 1 FINGER = SCROLL. Släpp förbi fingret direkt till viewporten
-            if (e.touches.length === 1) {
-                moved = true;
-                shield.style.pointerEvents = 'none';
-            } 
-            // 2 FINGRAR = ZOOM. Räkna ut skalan
-            else if (e.touches.length === 2) {
-                const dist = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-                
-                if (startDist > 0) {
-                    const delta = dist / startDist;
-                    // Begränsa zoom mellan 0.5x och 3x
-                    scale = Math.min(Math.max(0.5, scale * delta), 3);
-                    zoomLayer.style.transform = `scale(${scale})`;
-                    startDist = dist;
-                }
-            }
-        }, { passive: false });
+        shield.addEventListener('touchmove', function() {
+            // Minsta lilla rörelse (0 pixlar) aktiverar scrollen direkt och flyttar undan skölden
+            moved = true;
+            shield.style.pointerEvents = 'none'; 
+        }, { passive: true });
 
-        // Touch avslutas
         shield.addEventListener('touchend', function(e) {
-            if (e.touches.length === 0) {
-                // Om det bara var ett snabbt klick utan scroll/zoom -> Blockera trycket!
-                if (!moved) {
-                    e.preventDefault();
-                }
-                startDist = 0;
+            // Om fingret lyftes utan att ha rört sig en enda mikrometer, döda trycket
+            if (!moved) {
+                e.preventDefault();
             }
             
-            // Återställ skölden omedelbart så klickskyddet är aktivt
+            // Återställ skölden direkt för nästa touch
             setTimeout(() => {
                 shield.style.pointerEvents = 'auto';
             }, 10);
         }, { passive: false });
 
-        // Stoppar klick på dator
+        // Stoppar även vanliga musklick från datorer för säkerhets skull
         shield.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
         }, true);
     </script>
+
 </body>
 </html>
