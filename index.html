@@ -2,121 +2,37 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Excel Webbvy LIVE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Excel Webbvy</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #f3f2f1;
-        }
-
-        #viewport {
-            width: 100%;
-            height: 100%;
-            /* ÄNDRING: Tillåt scroll både i sidled och nedåt så man ser hela B3:CA97 */
-            overflow-x: auto; 
-            overflow-y: auto;
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
             -webkit-overflow-scrolling: touch;
-            position: relative;
         }
-
-        #zoom-layer {
-            transform-origin: 0 0;
+        .wrapper {
             width: 100%;
-            height: 100%;
-            transition: transform 0.1s ease-out;
-        }
-
-        @media (max-width: 768px) {
-            #zoom-layer {
-                /* ÄNDRING: Ökat bredden kraftigt från 535px eftersom B till CA är superbrett! */
-                width: 2800px;  
-                /* Höjden 1850px behålls eftersom det fortfarande är ca 95 rader (3 till 97) */
-                height: 1850px; 
-                overflow: hidden;
-            }
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+            height: 100vh;
             display: block;
         }
-
-        @media (max-width: 768px) {
-            iframe { pointer-events: none; }
-            #touch-handler {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 10;
-            }
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
         }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="zoom-layer">
-            <div id="touch-handler"></div>
-            <!-- Din nya länk med rätt flik och rätt cellområde -->
-            <iframe 
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-            </iframe>
-        </div>
+    <div class="wrapper">
+        <iframe 
+            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+        </iframe>
     </div>
 
-    <script>
-        const zoomLayer = document.getElementById('zoom-layer');
-        /* ÄNDRING: Matchar den nya bredden på 2800px för att beräkna zoomen rätt på mobilen */
-        const targetWidth = 2800; 
-        
-        function adjustZoom() {
-            if (window.innerWidth <= 768) {
-                const newScale = window.innerWidth / targetWidth;
-                zoomLayer.style.transform = `scale(${newScale})`;
-                return newScale;
-            }
-            zoomLayer.style.transform = `scale(1)`;
-            zoomLayer.style.width = '100%';
-            return 1;
-        }
-
-        let scale = adjustZoom();
-        let startDist = 0;
-
-        window.addEventListener('resize', () => { scale = adjustZoom(); });
-
-        document.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const dist = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-
-                if (startDist === 0) {
-                    startDist = dist;
-                } else {
-                    const delta = dist / startDist;
-                    scale = Math.min(Math.max(0.1, scale * delta), 1.5);
-                    zoomLayer.style.transform = `scale(${scale})`;
-                    startDist = dist;
-                }
-            }
-        }, { passive: false });
-
-        document.addEventListener('touchend', () => {
-            startDist = 0;
-        });
-    </script>
 </body>
 </html>
