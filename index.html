@@ -2,31 +2,42 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <!-- user-scalable=yes och maximum-scale tillåter mobilen att zooma in/ut -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=3.0">
-    <title>Excel Webbvy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Excel Webbvy med Zoom</title>
     <style>
-        html, body { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
-        .wrapper {
+        html, body {
+            margin: 0;
+            padding: 0;
             width: 100%;
-            height: 100vh;
-            display: block;
+            height: 100%;
+            overflow: hidden;
+            background: #f3f2f1;
+        }
+
+        #viewport {
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Detta tillåter scroll i alla riktningar när man zoomat in */
+            -webkit-overflow-scrolling: touch;
             position: relative;
         }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
+
+        #zoom-layer {
+            transform-origin: 0 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.05s ease-out;
         }
-        
-        .touch-shield {
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Skölden som ligger överst och känner av alla fingrar */
+        #touch-shield {
             position: absolute;
             top: 0;
             left: 0;
@@ -39,58 +50,85 @@
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="touch-shield" id="shield"></div>
-
-        <iframe 
-            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-        </iframe>
+    <div id="viewport">
+        <div id="zoom-layer">
+            <div id="touch-shield"></div>
+            <iframe 
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            </iframe>
+        </div>
     </div>
 
     <script>
-        const shield = document.getElementById('shield');
+        const shield = document.getElementById('touch-shield');
+        const zoomLayer = document.getElementById('zoom-layer');
+        
         let moved = false;
+        let scale = 1;
+        let startDist = 0;
 
+        // 1. HANTERA SCROLL OCH TRYCK (Samma princip som du gillade innan)
         shield.addEventListener('touchstart', function(e) {
-            // Om användaren använder TVÅ fingrar (för att zooma), stäng av skölden direkt
-            if (e.touches.length > 1) {
-                shield.style.pointerEvents = 'none';
-                return;
+            if (e.touches.length === 1) {
+                moved = false;
+            } else if (e.touches.length === 2) {
+                // Om två fingrar landar, mät startavståndet för zoomen
+                startDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
             }
-            moved = false;
         }, { passive: true });
 
         shield.addEventListener('touchmove', function(e) {
-            // Om man försöker zooma med två fingrar, avbryt skölden och låt webbläsaren zooma
-            if (e.touches.length > 1) {
+            // Om ETT finger rör sig: Aktivera scrollen direkt genom att släppa igenom fingret
+            if (e.touches.length === 1) {
+                moved = true;
                 shield.style.pointerEvents = 'none';
-                return;
+            } 
+            // Om TVÅ fingrar rör sig: Räkna ut och verkställ zoomen via CSS transform
+            else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                
+                if (startDist > 0) {
+                    const delta = dist / startDist;
+                    // Tillåt zoom mellan 1x (original) och 3x förstoring
+                    scale = Math.min(Math.max(1, scale * delta), 3);
+                    zoomLayer.style.transform = `scale(${scale})`;
+                    
+                    // Anpassa storleken på lagret så att scrollisterna hänger med vid zoom
+                    zoomLayer.style.width = (100 * scale) + '%';
+                    zoomLayer.style.height = (100 * scale) + '%';
+                    
+                    startDist = dist;
+                }
             }
-            
-            // Vid ett finger: Scrolla som vanligt
-            moved = true;
-            shield.style.pointerEvents = 'none'; 
-        }, { passive: true });
+        }, { passive: false });
 
         shield.addEventListener('touchend', function(e) {
-            // Om det var ett vanligt tryckförsök (inga fingrar kvar och ingen scroll har skett)
-            if (e.touches.length === 0 && !moved) {
-                e.preventDefault();
+            if (e.touches.length === 0) {
+                // Om fingret lyftes utan att ha scrollat eller zoomat, döda klicket
+                if (!moved) {
+                    e.preventDefault();
+                }
+                startDist = 0;
             }
             
-            // Återställ skölden så den är aktiv igen
+            // Återställ skölden så att den skyddar mot klick nästa gång man rör skärmen
             setTimeout(() => {
                 shield.style.pointerEvents = 'auto';
             }, 10);
         }, { passive: false });
 
-        // Stoppar klick från dator
+        // Blockera även musklick från datorer
         shield.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
         }, true);
     </script>
-
 </body>
 </html>
