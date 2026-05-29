@@ -58,12 +58,13 @@
         }
 
         /* iFramen blir 40px högre och trycks ner för att dölja menyraden */
-        iframe {
+       iframe {
             width: 100% !important;
             height: calc(100% + 40px) !important; 
             margin-bottom: -40px !important;      
             border: none !important;
             display: block !important;
+            background-color: #404040 !important; /* <--- HÄR ÄR DEN NYA RADEN INLAGD */
             opacity: 0; 
             transition: opacity 0.3s ease-in;
         }
