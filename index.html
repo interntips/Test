@@ -12,28 +12,60 @@
             height: 100%; 
             overflow: auto; 
             -webkit-overflow-scrolling: touch;
-        }
-        .wrapper {
-            width: 100%;
-            height: 100vh;
-            display: block;
-            position: relative;
-        }
-        iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
+            background-color: #404040; 
         }
         
-        /* Skölden som ligger över Excel och tvingar fram scroll-läge */
-        .touch-shield {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Centrerar innehållet på datorskärmar och tillåter sidan att scrolla nedåt vid behov */
+        .wrapper {
             width: 100%;
-            height: 100%;
-            z-index: 10;
-            background: transparent;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Startar från toppen så man kan scrolla ner på datorn */
+            position: relative;
+            background-color: #404040; 
+            padding-top: 20px;
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* DATOR-INSTÄLLNINGAR: Ger iFramen en rejäl höjd och bredd så rad 51+ inte klipps bort */
+        iframe { 
+            width: 100%; 
+            max-width: 1250px; 
+            height: 1750px; /* <--- tvingar fram höjden så att alla rader laddas in */
+            border: 0 !important;      
+            outline: none !important;
+            display: block;
+            background-color: #404040;
+        }
+        
+        /* Skölden aktiveras ENBART på mobiler */
+        .touch-shield {
+            display: none;
+        }
+
+        /* MOBIL-INSTÄLLNINGAR (Skärmar under 768px) */
+        @media (max-width: 768px) {
+            .wrapper {
+                height: 100vh;
+                padding: 0;
+                align-items: center;
+            }
+            .touch-shield {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background: transparent;
+            }
+            iframe {
+                max-width: 100%;
+                height: 100%; /* På mobilen behåller vi fullskärm för touch-zoomens skull */
+            }
         }
     </style>
 </head>
@@ -52,33 +84,26 @@
         const shield = document.getElementById('shield');
         let moved = false;
 
-        shield.addEventListener('touchstart', function() {
-            moved = false;
-        }, { passive: true });
+        if (shield) {
+            shield.addEventListener('touchstart', function() {
+                moved = false;
+            }, { passive: true });
 
-        shield.addEventListener('touchmove', function() {
-            // Minsta lilla rörelse (0 pixlar) aktiverar scrollen direkt och flyttar undan skölden
-            moved = true;
-            shield.style.pointerEvents = 'none'; 
-        }, { passive: true });
+            shield.addEventListener('touchmove', function() {
+                moved = true;
+                shield.style.pointerEvents = 'none'; 
+            }, { passive: true });
 
-        shield.addEventListener('touchend', function(e) {
-            // Om fingret lyftes utan att ha rört sig en enda mikrometer, döda trycket
-            if (!moved) {
-                e.preventDefault();
-            }
-            
-            // Återställ skölden direkt för nästa touch
-            setTimeout(() => {
-                shield.style.pointerEvents = 'auto';
-            }, 10);
-        }, { passive: false });
-
-        // Stoppar även vanliga musklick från datorer för säkerhets skull
-        shield.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }, true);
+            shield.addEventListener('touchend', function(e) {
+                if (!moved) {
+                    e.preventDefault();
+                }
+                
+                setTimeout(() => {
+                    shield.style.pointerEvents = 'auto';
+                }, 10);
+            }, { passive: false });
+        }
     </script>
 
 </body>
