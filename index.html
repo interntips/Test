@@ -6,75 +6,31 @@
     <title>Fotbolls-vm 2026 - Interntips</title>
     <style>
         html, body { 
-            margin: 0 !important; 
-            padding: 0 !important; 
-            width: 100% !important; 
-            height: 100% !important; 
-            overflow: auto !important; 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
             -webkit-overflow-scrolling: touch;
-            background-color: #404040 !important;
+            background-color: #404040 !important; 
         }
         
-        /* Centrerar paketet på datorskärmar */
         .wrapper {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: flex-start !important;
-            width: 100% !important;
-            min-height: 100vh !important;
-            background-color: #404040 !important;
-        }
-
-        /* Behållaren runt iFramen */
-        .excel-container {
-            position: relative !important;
-            box-sizing: border-box !important;
-            background-color: #404040 !important;
-        }
-
-        iframe { 
-            border: none !important;        
-            box-shadow: none !important;    
-            outline: none !important;       
-            display: block !important;
+            width: 100%;
+            height: 100vh;
+            display: block;
+            position: relative;
             background-color: #404040 !important; 
         }
 
-        /* ------------------------------------------
-           DATOR-INSTÄLLNINGAR (Skärmar över 768px)
-           ------------------------------------------ */
-        @media (min-width: 769px) {
-            .excel-container {
-                width: 1200px !important;      /* Rejäl bredd så du ser hela vägen till höger */
-                height: 1620px !important;     /* Höjden som klipper bort det vita i botten */
-                margin-top: 30px !important;
-                margin-bottom: 30px !important;
-                overflow: hidden !important;   /* Klipper bort Excels dolda vita celler */
-            }
-            
-            /* Tvingar iFramen att bli större än containern för att dölja Excels vita marginaler */
-            html body .wrapper .excel-container iframe {
-                width: 1260px !important;      /* Trycker ut vita tomma celler/scrollister till höger */
-                height: 1720px !important;     /* Trycker ner vita tomma celler/scrollister i botten */
-                margin-left: -5px !important;  /* Finjustering i sidled */
-            }
-        }
-
-        /* ------------------------------------------
-           MOBIL-INSTÄLLNINGAR (Lämnas som det var)
-           ------------------------------------------ */
-        @media (max-width: 768px) {
-            .excel-container {
-                width: 100% !important;
-                height: 100vh !important;
-            }
-            iframe {
-                width: 100% !important;
-                height: 100% !important;
-            }
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            background-color: #404040 !important;
         }
         
-        /* Skölden för touch-skärmar (Orörd) */
+        /* Skölden som ligger över Excel och tvingar fram scroll-läge */
         .touch-shield {
             position: absolute;
             top: 0;
@@ -84,27 +40,42 @@
             z-index: 10;
             background: transparent;
         }
+
+        /* ------------------------------------------
+           DATOR-INSTÄLLNINGAR (Skärmar över 768px)
+           Anpassat för smala 20-bildpunkters kolumner
+           ------------------------------------------ */
+        @media (min-width: 769px) {
+            .wrapper {
+                width: 680px !important;       /* Perfekt bredd för din kompakta tabell */
+                height: 1650px !important;     /* Höjd som klipper bort dolda vita celler i botten */
+                margin: 30px auto !important;  /* Centrerar hela paketet på datorskärmen */
+                overflow: hidden !important;   /* Klipper bort Excels scrollister och vita ytor */
+                box-shadow: none !important;
+            }
+            
+            iframe {
+                width: 730px !important;       /* Trycker ut Excels scrollista 50px till höger om wrapper */
+                height: 1750px !important;     /* Trycker ner botten utom synhåll */
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
-        <div class="excel-container">
-            <div class="touch-shield" id="shield"></div>
+        <div class="touch-shield" id="shield"></div>
 
-            <iframe 
-                id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-                frameborder="0" 
-                scrolling="no"
-                style="border:0 !important; box-shadow:none !important;">
-            </iframe>
-        </div>
+        <iframe 
+            id="excel-iframe"
+            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            frameborder="0"
+            scrolling="no">
+        </iframe>
     </div>
 
     <script>
-        // Hela ditt fungerande touch-skript lämnas exakt som det var
         const shield = document.getElementById('shield');
         let moved = false;
 
