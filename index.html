@@ -12,17 +12,23 @@
             height: 100%; 
             overflow: auto; 
             -webkit-overflow-scrolling: touch;
+            background-color: #404040 !important; /* Tvingar bakgrunden att bli mörkgrå */
         }
         .wrapper {
             width: 100%;
             height: 100vh;
             display: block;
             position: relative;
+            background-color: #404040 !important; /* Tvingar bakgrunden att bli mörkgrå */
         }
         iframe { 
             width: 100%; 
             height: 100%; 
-            border: none; 
+            border: none !important;        /* Tar bort standardramen */
+            box-shadow: none !important;    /* Tar bort eventuella CSS-skuggor */
+            outline: none !important;       /* Tar bort fokuseringslinjer */
+            display: block;
+            background-color: #404040 !important; /* Ger iFramen samma bakgrund */
         }
         
         /* Skölden som ligger över Excel och tvingar fram scroll-läge */
@@ -43,6 +49,7 @@
         <div class="touch-shield" id="shield"></div>
 
         <iframe 
+            id="excel-iframe"
             src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
         </iframe>
@@ -57,24 +64,20 @@
         }, { passive: true });
 
         shield.addEventListener('touchmove', function() {
-            // Minsta lilla rörelse (0 pixlar) aktiverar scrollen direkt och flyttar undan skölden
             moved = true;
             shield.style.pointerEvents = 'none'; 
         }, { passive: true });
 
         shield.addEventListener('touchend', function(e) {
-            // Om fingret lyftes utan att ha rört sig en enda mikrometer, döda trycket
             if (!moved) {
                 e.preventDefault();
             }
             
-            // Återställ skölden direkt för nästa touch
             setTimeout(() => {
                 shield.style.pointerEvents = 'auto';
             }, 10);
         }, { passive: false });
 
-        // Stoppar även vanliga musklick från datorer för säkerhets skull
         shield.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
