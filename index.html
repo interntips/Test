@@ -3,32 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Excel Webbvy</title>
-    <style>
+    <title>Fotbolls-vm 2026 - Interntips</title> <style>
         html, body { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            width: 100% !important; 
+            height: 100% !important; 
+            overflow: auto !important; 
             -webkit-overflow-scrolling: touch;
-            background-color: #404040 !important; /* Tvingar bakgrunden att bli mörkgrå */
+            background-color: #404040 !important; /* Fixar den gråa bakgrunden på hela sidan */
         }
         .wrapper {
-            width: 100%;
-            height: 100vh;
-            display: block;
-            position: relative;
-            background-color: #404040 !important; /* Tvingar bakgrunden att bli mörkgrå */
+            width: 100% !important;
+            height: 100vh !important;
+            display: block !important;
+            position: relative !important;
+            background-color: #404040 !important; /* Fixar den gråa bakgrunden runt iFramen */
         }
         iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: none !important;        /* Tar bort standardramen */
-            box-shadow: none !important;    /* Tar bort eventuella CSS-skuggor */
-            outline: none !important;       /* Tar bort fokuseringslinjer */
-            display: block;
-            background-color: #404040 !important; /* Ger iFramen samma bakgrund */
+            width: 100% !important; 
+            height: 100% !important; 
+            border: none !important;        /* DÖDAR standardramen */
+            box-shadow: none !important;    /* DÖDAR skuggan helt */
+            outline: none !important;       
+            display: block !important;
+            background-color: #404040 !important; 
         }
         
         /* Skölden som ligger över Excel och tvingar fram scroll-läge */
@@ -43,15 +42,16 @@
         }
     </style>
 </head>
-<body>
-
-    <div class="wrapper">
+<body style="background-color: #404040 !important;"> <div class="wrapper" style="background-color: #404040 !important;">
         <div class="touch-shield" id="shield"></div>
 
         <iframe 
             id="excel-iframe"
             src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA97&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            frameborder="0" 
+            scrolling="no"
+            style="border:0 !important; box-shadow:none !important; background-color: #404040 !important;">
         </iframe>
     </div>
 
