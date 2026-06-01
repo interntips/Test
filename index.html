@@ -14,7 +14,6 @@
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
             background-color: #FFFFFF; 
-            /* Hindrar användaren från att markera text runt bladet */
             user-select: none;
             -webkit-user-select: none;
         }
@@ -28,36 +27,37 @@
             min-height: 100vh;
         }
         
-        /* DATOR-INSTÄLLNINGAR FÖR BEHÅLLAREN: 
-           Använder margin: 0 auto för att centrera på jämna pixlar.
-           Tvingar grafikmotorn att rita skarpa kanter för att motverka vita linjer. */
+        /* FIX FÖR VITA KANTER: 
+           Behållaren har exakt samma fasta mått som iFramen. 
+           Inget tillåts flexa eller avrunda pixlar dynamiskt. */
         .excel-container {
             display: block;
             margin: 0 auto;
             width: 1650px; 
-            max-width: 100%; 
-            height: 1910px;    /* Klipper bort de nedersta 40 pixlarna så menyraden försvinner */
+            height: 1910px;    /* Döljer bottenraden */
             overflow: hidden !important; 
             position: relative;
-            
-            /* Motverkar pixelavrundningsfel i Chrome/Safari/Edge */
+            background-color: #FFFFFF;
+
+            /* Tvingar webbläsaren att rita stenhårda pixelkanter */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             -ms-interpolation-mode: nearest-neighbor;
+            transform: translate3d(0, 0, 0); /* Aktiverar hårdvaruacceleration */
         }
         
-        /* iFramen görs lite högre än sin behållare så att bottenraden hamnar "utanför bild" */
+        /* iFramen är låst till fasta pixlar för att förhindra Excels subpixel-glapp */
         iframe { 
-            width: 100%; 
-            height: 1950px;    
+            width: 1650px !important; 
+            height: 1950px !important;    
             border: 0 !important;      
             outline: none !important;
             display: block;
             background-color: #FFFFFF;
-            margin-bottom: -40px !important; /* Trycker ner bottenraden under kanten */
+            margin-bottom: -40px !important;
         }
         
-        /* GLASLAGER: Ligger permanent i vägen så man aldrig kan klicka eller markera celler i Excel */
+        /* GLASLAGER: Ligger klistrat över för att stoppa klick och cellmarkeringar */
         .scroll-shield {
             position: absolute;
             top: 0;
@@ -67,26 +67,31 @@
             z-index: 10;
             background: transparent;
             pointer-events: auto; 
-            touch-action: none; /* Stoppar standard-touch så vi kan styra det via script */
+            touch-action: none;
         }
 
-        /* MOBIL-JUSTERING */
+        /* MOBIL- OCH SKÄRMJUSTERING: 
+           Istället för att ändra iframens bredd (vilket skapar vita linjer), 
+           så zoomar vi ner hela elementet proportionerligt på mindre skärmar. */
+        @media (max-width: 1690px) {
+            .excel-container {
+                transform: scale(0.9);
+                transform-origin: top center;
+            }
+        }
+        @media (max-width: 1400px) {
+            .excel-container {
+                transform: scale(0.75);
+                transform-origin: top center;
+            }
+        }
         @media (max-width: 768px) {
             .wrapper {
-                height: 100vh;
                 padding: 0;
-                overflow: hidden;
             }
             .excel-container {
-                width: 100%;
-                max-width: 100%;
-                height: 100%;
-                margin: 0;
-            }
-            iframe {
-                height: 100%; 
-                overflow: auto !important; 
-                margin-bottom: 0 !important;
+                transform: scale(0.45);
+                transform-origin: top center;
             }
         }
     </style>
@@ -97,10 +102,10 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- HÄR ÄR DIN FULLSTÄNDIGA ADRESS UTAN FÖRKORTNINGAR -->
+            <!-- Din exakta adress i en pixel-låst miljö -->
             <iframe 
                 id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+                src="https://1drv.ms" 
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
@@ -110,11 +115,10 @@
         const shield = document.getElementById('shield');
         const iframe = document.getElementById('excel-iframe');
         
-        // Fångar upp mushjulet på skölden och skickar vidare scroll-infot direkt in i Excels olåsta celler
+        // Vidarebefordrar skroll-händelser rakt in i Excel-motorn utan att klick släpps igenom
         shield.addEventListener('wheel', function(e) {
             e.preventDefault();
             if (iframe.contentWindow) {
-                // Skickar scroll-händelsen förbi det blockerande lagret direkt till Excels fönster
                 iframe.contentWindow.postMessage({
                     type: 'scroll',
                     deltaY: e.deltaY,
@@ -123,7 +127,7 @@
             }
         }, { passive: false });
 
-        // Hantering av touch-scroll för mobiler (swipes) utan att tillåta klick/markeringar
+        // Touch-skroll för surfplattor och mobiler
         let startY = 0;
         let startX = 0;
 
