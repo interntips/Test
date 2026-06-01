@@ -17,25 +17,30 @@
         }
         
         .wrapper {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
             position: relative;
             background-color: #FFFFFF; 
             padding: 20px;
             box-sizing: border-box;
+            width: 100%;
+            min-height: 100vh;
         }
         
         /* DATOR-INSTÄLLNINGAR FÖR BEHÅLLAREN: 
-           Denna klipper bort de nedersta 40 pixlarna så menyraden försvinner */
+           Använder margin: 0 auto för att centrera på jämna pixlar.
+           Tvingar grafikmotorn att rita skarpa kanter för att motverka vita linjer. */
         .excel-container {
-            width: 100%;
-            max-width: 1650px; /* Din nya bredd med de 10 extra kolumnerna */
-            height: 1910px;    /* Sänkt med 40px för att dölja bottenraden */
+            display: block;
+            margin: 0 auto;
+            width: 1650px; 
+            max-width: 100%; 
+            height: 1910px;    /* Klipper bort de nedersta 40 pixlarna så menyraden försvinner */
             overflow: hidden !important; 
             position: relative;
+            
+            /* Motverkar pixelavrundningsfel i Chrome/Safari/Edge */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
         }
         
         /* iFramen görs lite högre än sin behållare så att bottenraden hamnar "utanför bild" */
@@ -65,12 +70,13 @@
             .wrapper {
                 height: 100vh;
                 padding: 0;
-                align-items: center;
                 overflow: hidden;
             }
             .excel-container {
+                width: 100%;
                 max-width: 100%;
                 height: 100%;
+                margin: 0;
             }
             iframe {
                 height: 100%; 
@@ -87,7 +93,7 @@
             <div class="scroll-shield" id="shield"></div>
 
             <iframe 
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+                src="https://1drv.ms" 
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
