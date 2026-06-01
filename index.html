@@ -46,16 +46,19 @@
             transform: translate3d(0, 0, 0); /* Aktiverar hårdvaruacceleration */
         }
         
-        /* iFramen är låst till fasta pixlar för att förhindra Excels subpixel-glapp */
-        iframe { 
-            width: 1650px !important; 
-            height: 1950px !important;    
-            border: 0 !important;      
-            outline: none !important;
-            display: block;
-            background-color: #FFFFFF;
-            margin-bottom: -40px !important;
-        }
+      iframe { 
+    width: 1650px !important; 
+    height: 1950px !important;    
+    border: 0 !important;      
+    outline: none !important;
+    display: block;
+    margin-bottom: -40px !important;
+    
+    /* NYTT: Tvingar grafikmotorn att eliminera eftersläpningar/glapp */
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+    perspective: 1000;
+}
         
         /* GLASLAGER: Ligger klistrat över för att stoppa klick och cellmarkeringar */
         .scroll-shield {
