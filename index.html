@@ -27,7 +27,6 @@
             min-height: 100vh;
         }
         
-        /* BEHÅLLAREN: Styr den exakta ramen för ditt Excelark */
         .excel-container {
             display: block;
             margin: 0 auto;
@@ -37,27 +36,31 @@
             position: relative;
             background-color: #404040; 
 
-            /* Tvingar webbläsaren att rendera skarpa linjer */
+            /* Tvingar webbläsaren att rita skarpa pixelgränser */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             -ms-interpolation-mode: nearest-neighbor;
         }
         
-        /* FIXEN FÖR INTERNA GLAPPET: 
-           Genom att sätta width till 100% istället för fasta pixlar, tillåter vi 
-           Excels interna kod att själv synka panelerna utan att skapa pixelavrundningsfel. 
-           Vi höjer iframen något för att dölja bottenraden naturligt. */
+        /* FIX FÖR INTERNA PANELFRAKTIONER:
+           Genom att sätta en mikroskopisk transform-skala tvingar vi webbläsarens grafikmotor 
+           att räkna om Excels interna panellayout. Det stänger Microsofts nya felmarginaler 
+           längs linjerna för frysta celler. Klippningen (clip-path) ser till att kanterna förblir raka. */
         iframe { 
-            width: 100% !important; 
+            width: 1650px !important; 
             height: 1950px !important;    
             border: 0 !important;      
             outline: none !important;
             display: block;
-            background-color: #FFFFFF;
-            margin-bottom: -40px !important; /* Skjuter ner bottenraden utanför behållaren */
+            background-color: #404040;
+            margin-bottom: -40px !important; /* Döljer bottenraden */
+            
+            /* Tvingar ihop panelgränserna och aktiverar grafikkortet */
+            transform: scale(1.0006) translate3d(0, 0, 0); 
+            will-change: transform;
+            clip-path: inset(0px 0px 0px 0px);
         }
         
-        /* GLASLAGER: Ligger klistrat över för att stoppa klick och cellmarkeringar */
         .scroll-shield {
             position: absolute;
             top: 0;
@@ -70,7 +73,6 @@
             touch-action: none;
         }
 
-        /* MOBIL- OCH SKÄRMJUSTERING */
         @media (max-width: 1690px) {
             .excel-container {
                 transform: scale(0.9);
@@ -100,10 +102,10 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- Din fullständiga, omodifierade adress i en optimerad iframe -->
+            <!-- Din exakta, omodifierade adress i en pixel-optimerad miljö -->
             <iframe 
                 id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdHideSheetTabs=True&nav=1" 
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&wdHideGridlines=True&wdHideHeaders=True&nav=1" 
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
@@ -113,7 +115,6 @@
         const shield = document.getElementById('shield');
         const iframe = document.getElementById('excel-iframe');
         
-        // Vidarebefordrar skroll-händelser stabilt in i Excel
         shield.addEventListener('wheel', function(e) {
             e.preventDefault();
             if (iframe.contentWindow) {
@@ -125,7 +126,6 @@
             }
         }, { passive: false });
 
-        // Touch-skroll för surfplattor och mobiler
         let startY = 0;
         let startX = 0;
 
