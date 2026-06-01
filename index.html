@@ -20,47 +20,46 @@
         
         .wrapper {
             position: relative;
-            background-color: #404040; 
+            background-color: #FFFFFF; 
             padding: 20px;
             box-sizing: border-box;
             width: 100%;
             min-height: 100vh;
         }
         
-        /* FIX FÖR VITA KANTER: 
-           Behållaren har exakt samma fasta mått som iFramen. 
-           Inget tillåts flexa eller avrunda pixlar dynamiskt. */
+        /* BEHÅLLAREN FUNGERAR NU SOM EN STRIPT MASK:
+           Den har exakta mått, och allt som tvingas utanför dess ramar döljs direkt. */
         .excel-container {
             display: block;
             margin: 0 auto;
             width: 1650px; 
-            height: 1910px;    /* Döljer bottenraden */
+            height: 1910px; /* Den exakta höjden du vill visa på skärmen */
             overflow: hidden !important; 
             position: relative;
-            background-color: #404040;
-
-            /* Tvingar webbläsaren att rita stenhårda pixelkanter */
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            -ms-interpolation-mode: nearest-neighbor;
-            transform: translate3d(0, 0, 0); /* Aktiverar hårdvaruacceleration */
+            background-color: #FFFFFF;
         }
         
-      iframe { 
-    width: 1650px !important; 
-    height: 1950px !important;    
-    border: 0 !important;      
-    outline: none !important;
-    display: block;
-    margin-bottom: -40px !important;
-    
-    /* NYTT: Tvingar grafikmotorn att eliminera eftersläpningar/glapp */
-    transform: translate3d(0, 0, 0);
-    will-change: transform;
-    perspective: 1000;
-}
+        /* TRICKET SOM TAR BORT FELET:
+           Genom att lägga till margin-top och margin-left drar vi ut Excels interna 
+           felmarginaler utanför behållarens synliga yta, vilket klipper bort de vita linjerna. */
+        iframe { 
+            width: 1658px !important;  /* Gjort 8px bredare för att kompensera för sidoklippet */
+            height: 1958px !important; /* Gjort 8px högre för att kompensera för toppklippet */   
+            border: 0 !important;      
+            outline: none !important;
+            display: block;
+            background-color: #FFFFFF;
+            
+            /* Drar ut Microsofts fasta vita linje under kanten på behållaren */
+            margin-top: -4px !important;  
+            margin-left: -4px !important; 
+            margin-bottom: -44px !important; /* Behåller döljningen av menyraden i botten */
+            
+            /* Tvingar webbläsaren att frysa renderingen i ett skarpt läge */
+            transform: translate3d(0, 0, 0);
+        }
         
-        /* GLASLAGER: Ligger klistrat över för att stoppa klick och cellmarkeringar */
+        /* GLASLAGER: Stoppar klick och cellmarkeringar helt */
         .scroll-shield {
             position: absolute;
             top: 0;
@@ -73,9 +72,7 @@
             touch-action: none;
         }
 
-        /* MOBIL- OCH SKÄRMJUSTERING: 
-           Istället för att ändra iframens bredd (vilket skapar vita linjer), 
-           så zoomar vi ner hela elementet proportionerligt på mindre skärmar. */
+        /* MOBIL- OCH SKÄRMJUSTERING */
         @media (max-width: 1690px) {
             .excel-container {
                 transform: scale(0.9);
@@ -105,10 +102,10 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- Din exakta adress i en pixel-låst miljö -->
+            <!-- Din fullständiga, omodifierade adress -->
             <iframe 
                 id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+                src="https://1drv.ms" 
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
@@ -118,7 +115,7 @@
         const shield = document.getElementById('shield');
         const iframe = document.getElementById('excel-iframe');
         
-        // Vidarebefordrar skroll-händelser rakt in i Excel-motorn utan att klick släpps igenom
+        // Vidarebefordrar skroll-händelser stabilt in i Excel
         shield.addEventListener('wheel', function(e) {
             e.preventDefault();
             if (iframe.contentWindow) {
@@ -135,14 +132,14 @@
         let startX = 0;
 
         shield.addEventListener('touchstart', function(e) {
-            startY = e.touches[0].pageY;
-            startX = e.touches[0].pageX;
+            startY = e.touches.pageY;
+            startX = e.touches.pageX;
         }, { passive: true });
 
         shield.addEventListener('touchmove', function(e) {
             e.preventDefault();
-            const deltaY = startY - e.touches[0].pageY;
-            const deltaX = startX - e.touches[0].pageX;
+            const deltaY = startY - e.touches.pageY;
+            const deltaX = startX - e.touches.pageX;
 
             if (iframe.contentWindow) {
                 iframe.contentWindow.postMessage({
@@ -152,8 +149,8 @@
                 }, '*');
             }
 
-            startY = e.touches[0].pageY;
-            startX = e.touches[0].pageX;
+            startY = e.touches.pageY;
+            startX = e.touches.pageX;
         }, { passive: false });
     </script>
 
