@@ -61,9 +61,7 @@
             if (!moved) {
                 e.preventDefault();
             }
-            setTimeout(() => {
-                shield.style.pointerEvents = 'auto';
-            }, 0);
+            shield.style.pointerEvents = 'auto';
         }, { passive: false });
         shield.addEventListener('click', function(e) {
             e.preventDefault();
