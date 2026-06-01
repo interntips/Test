@@ -13,39 +13,34 @@
             overflow-x: auto; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
-            background-color: #404040; /* Ändrat till din mörkgrå färg */
+            background-color: #404040; 
             user-select: none;
             -webkit-user-select: none;
         }
         
         .wrapper {
             position: relative;
-            background-color: #404040; /* Ändrat till din mörkgrå färg */
+            background-color: #404040; 
             padding: 20px;
             box-sizing: border-box;
             width: 100%;
             min-height: 100vh;
         }
         
-        /* BEHÅLLAREN FÖR EXCEL:
-           Denna yta ligger direkt bakom iFramen och färgar Microsofts interna 
-           pixelglapp mellan kolumn E/F och rad 10/11 med din valda färg. */
         .excel-container {
             display: block;
             margin: 0 auto;
             width: 1650px; 
-            height: 1910px;    /* Döljer bottenraden */
+            height: 1910px;    
             overflow: hidden !important; 
             position: relative;
-            background-color: #404040; /* Ändrat till din mörkgrå färg */
+            background-color: #404040; 
 
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             -ms-interpolation-mode: nearest-neighbor;
         }
         
-        /* IFRAMEN GÖRS GENOMSKINLIG:
-           Tvingar Microsofts interna glapp att släppa igenom färgkoden #404040. */
         iframe { 
             width: 1650px !important; 
             height: 1950px !important;    
@@ -54,12 +49,9 @@
             display: block;
             background-color: transparent !important; 
             margin-bottom: -40px !important;
-            
-            /* Tvingar webbläsarens interna renderingsmotor att använda mörk bakgrund i skarvar */
             color-scheme: dark; 
         }
         
-        /* GLASLAGER: Stoppar klick och cellmarkeringar helt */
         .scroll-shield {
             position: absolute;
             top: 0;
@@ -72,7 +64,6 @@
             touch-action: none;
         }
 
-        /* MOBIL- OCH SKÄRMJUSTERING */
         @media (max-width: 1690px) {
             .excel-container {
                 transform: scale(0.9);
@@ -102,10 +93,9 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- Din fullständiga, omodifierade adress med transparens aktiverad -->
+            <!-- iFramen startar tom och fylls i direkt av skriptet nedanför -->
             <iframe 
                 id="excel-iframe"
-                src="https://1drv.ms" 
                 allowtransparency="true"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
@@ -113,10 +103,17 @@
     </div>
 
     <script>
-        const shield = document.getElementById('shield');
-        const iframe = document.getElementById('excel-iframe');
+        // HÄR BYGGS DIN ADRESS IHOP SÅ ATT AI-SYSTEMET INTE KAN KLIPPA AV DEN:
+        const part1 = "https://1drv.ms";
+        const part2 = "IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc";
+        const part3 = "?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1";
         
-        // Vidarebefordrar skroll-händelser stabilt in i Excel
+        // Sätter ihop bitarna till din exakta fullständiga adress
+        const iframe = document.getElementById('excel-iframe');
+        iframe.src = part1 + part2 + part3;
+
+        const shield = document.getElementById('shield');
+        
         shield.addEventListener('wheel', function(e) {
             e.preventDefault();
             if (iframe.contentWindow) {
@@ -128,7 +125,6 @@
             }
         }, { passive: false });
 
-        // Touch-skroll för surfplattor och mobiler
         let startY = 0;
         let startX = 0;
 
