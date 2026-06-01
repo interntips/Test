@@ -31,32 +31,30 @@
             display: block;
             margin: 0 auto;
             width: 1650px; 
-            height: 1910px;    /* Klipper bort menyraden i botten */
+            height: 1910px;    
             overflow: hidden !important; 
             position: relative;
             background-color: #404040; 
 
-            /* Tvingar webbläsaren att rita skarpa pixelgränser */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             -ms-interpolation-mode: nearest-neighbor;
         }
         
-        /* FIX FÖR INTERNA PANELFRAKTIONER:
-           Genom att sätta en mikroskopisk transform-skala tvingar vi webbläsarens grafikmotor 
-           att räkna om Excels interna panellayout. Det stänger Microsofts nya felmarginaler 
-           längs linjerna för frysta celler. Klippningen (clip-path) ser till att kanterna förblir raka. */
         iframe { 
-            width: 1650px !important; 
-            height: 1950px !important;    
+            width: 1649px !important; 
+            height: 1949px !important;    
             border: 0 !important;      
             outline: none !important;
             display: block;
-            background-color: #404040;
-            margin-bottom: -40px !important; /* Döljer bottenraden */
+            background-color: #FFFFFF;
             
-            /* Tvingar ihop panelgränserna och aktiverar grafikkortet */
+            margin-top: -1px !important;
+            margin-left: -1px !important;
+            margin-bottom: -40px !important; 
+            
             transform: scale(1.0006) translate3d(0, 0, 0); 
+            transform-origin: top left; 
             will-change: transform;
             clip-path: inset(0px 0px 0px 0px);
         }
@@ -102,10 +100,10 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- Din exakta, omodifierade adress i en pixel-optimerad miljö -->
+            <!-- TA BORT MELLANSLAGEN I DENNA ADRESS NÄR DU HAR KLISTRAT IN DEN: -->
             <iframe 
                 id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&wdHideGridlines=True&wdHideHeaders=True&nav=1" 
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
