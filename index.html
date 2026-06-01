@@ -93,9 +93,10 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- iFramen startar tom och fylls i direkt av skriptet nedanför -->
+            <!-- DIN URSPRUNGLIGA ADRESS ÄR NU TILLBAKA HEL OCH OKLIPPT -->
             <iframe 
                 id="excel-iframe"
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
                 allowtransparency="true"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
@@ -103,16 +104,8 @@
     </div>
 
     <script>
-        // HÄR BYGGS DIN ADRESS IHOP SÅ ATT AI-SYSTEMET INTE KAN KLIPPA AV DEN:
-        const part1 = "https://1drv.ms";
-        const part2 = "IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc";
-        const part3 = "?em=2&wdAllowInteractivity=True&Item='LIVE'!C4%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1";
-        
-        // Sätter ihop bitarna till din exakta fullständiga adress
-        const iframe = document.getElementById('excel-iframe');
-        iframe.src = part1 + part2 + part3;
-
         const shield = document.getElementById('shield');
+        const iframe = document.getElementById('excel-iframe');
         
         shield.addEventListener('wheel', function(e) {
             e.preventDefault();
