@@ -43,12 +43,21 @@
     <div class="wrapper">
         <div class="touch-shield" id="shield"></div>
         <iframe 
+            id="excel-iframe"
             src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
         </iframe>
     </div>
     <script>
         const shield = document.getElementById('shield');
+
+        // Aktivera shield bara på touch-enheter
+        if ('ontouchstart' in window) {
+            shield.style.display = 'block';
+        } else {
+            shield.style.display = 'none';
+        }
+
         let moved = false;
         shield.addEventListener('touchstart', function() {
             moved = false;
