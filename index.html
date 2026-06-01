@@ -13,50 +13,50 @@
             overflow-x: auto; 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
-            background-color: #FFFFFF; 
+            background-color: #404040; /* Ändrat till din mörkgrå färg */
             user-select: none;
             -webkit-user-select: none;
         }
         
         .wrapper {
             position: relative;
-            background-color: #FFFFFF; 
+            background-color: #404040; /* Ändrat till din mörkgrå färg */
             padding: 20px;
             box-sizing: border-box;
             width: 100%;
             min-height: 100vh;
         }
         
-        /* BEHÅLLAREN FUNGERAR NU SOM EN STRIPT MASK:
-           Den har exakta mått, och allt som tvingas utanför dess ramar döljs direkt. */
+        /* BEHÅLLAREN FÖR EXCEL:
+           Denna yta ligger direkt bakom iFramen och färgar Microsofts interna 
+           pixelglapp mellan kolumn E/F och rad 10/11 med din valda färg. */
         .excel-container {
             display: block;
             margin: 0 auto;
             width: 1650px; 
-            height: 1910px; /* Den exakta höjden du vill visa på skärmen */
+            height: 1910px;    /* Döljer bottenraden */
             overflow: hidden !important; 
             position: relative;
-            background-color: #FFFFFF;
+            background-color: #404040; /* Ändrat till din mörkgrå färg */
+
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
         }
         
-        /* TRICKET SOM TAR BORT FELET:
-           Genom att lägga till margin-top och margin-left drar vi ut Excels interna 
-           felmarginaler utanför behållarens synliga yta, vilket klipper bort de vita linjerna. */
+        /* IFRAMEN GÖRS GENOMSKINLIG:
+           Tvingar Microsofts interna glapp att släppa igenom färgkoden #404040. */
         iframe { 
-            width: 1658px !important;  /* Gjort 8px bredare för att kompensera för sidoklippet */
-            height: 1958px !important; /* Gjort 8px högre för att kompensera för toppklippet */   
+            width: 1650px !important; 
+            height: 1950px !important;    
             border: 0 !important;      
             outline: none !important;
             display: block;
-            background-color: #FFFFFF;
+            background-color: transparent !important; 
+            margin-bottom: -40px !important;
             
-            /* Drar ut Microsofts fasta vita linje under kanten på behållaren */
-            margin-top: -4px !important;  
-            margin-left: -4px !important; 
-            margin-bottom: -44px !important; /* Behåller döljningen av menyraden i botten */
-            
-            /* Tvingar webbläsaren att frysa renderingen i ett skarpt läge */
-            transform: translate3d(0, 0, 0);
+            /* Tvingar webbläsarens interna renderingsmotor att använda mörk bakgrund i skarvar */
+            color-scheme: dark; 
         }
         
         /* GLASLAGER: Stoppar klick och cellmarkeringar helt */
@@ -102,10 +102,11 @@
         <div class="excel-container">
             <div class="scroll-shield" id="shield"></div>
 
-            <!-- Din fullständiga, omodifierade adress -->
+            <!-- Din fullständiga, omodifierade adress med transparens aktiverad -->
             <iframe 
                 id="excel-iframe"
                 src="https://1drv.ms" 
+                allowtransparency="true"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
