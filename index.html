@@ -1,19 +1,21 @@
-<!DOCTYPE html>
+html<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Fotbolls-VM 2026 - Interntips</title>
     <style>
-        html, body { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             background-color: #404040;
         }
+
         .wrapper {
             width: 100%;
             display: flex;
@@ -21,41 +23,65 @@
             position: relative;
             background-color: #404040;
         }
-        iframe { 
-            width: 100%; 
-            max-width: 1600px;
-            height: 1806px; 
+
+        .iframe-scaler {
+            width: 1600px;
+            height: 1806px;
+            transform-origin: top center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
             border: none;
             display: block;
             clip-path: inset(3px 3px 40px 3px);
         }
-        
+
         .touch-shield {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            max-width: 1400px;
             height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
             z-index: 10;
             background: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="touch-shield" id="shield"></div>
-        <iframe 
-            id="excel-iframe"
-            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-        </iframe>
+    <div class="wrapper" id="wrapper">
+        <div class="iframe-scaler" id="scaler">
+            <div class="touch-shield" id="shield"></div>
+            <iframe
+                id="excel-iframe"
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            </iframe>
+        </div>
     </div>
-    <script>
-        const shield = document.getElementById('shield');
 
+    <script>
+        const IFRAME_W = 1600;
+        const IFRAME_H = 1806;
+
+        const scaler  = document.getElementById('scaler');
+        const wrapper = document.getElementById('wrapper');
+
+        function applyScale() {
+            const vw = document.documentElement.clientWidth;
+            const scale = Math.min(1, vw / IFRAME_W);
+            scaler.style.transform = `scale(${scale})`;
+            const scaledH = IFRAME_H * scale;
+            wrapper.style.height = scaledH + 'px';
+        }
+
+        applyScale();
+        window.addEventListener('resize', applyScale);
+
+        const shield = document.getElementById('shield');
         if ('ontouchstart' in window) {
             shield.style.display = 'block';
         } else {
@@ -63,23 +89,23 @@
         }
 
         let moved = false;
-        shield.addEventListener('touchstart', function() {
-            moved = false;
-        }, { passive: true });
-        shield.addEventListener('touchmove', function() {
+        shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
+        shield.addEventListener('touchmove',  () => {
             moved = true;
-            shield.style.pointerEvents = 'none'; 
+            shield.style.pointerEvents = 'none';
         }, { passive: true });
-        shield.addEventListener('touchend', function(e) {
-            if (!moved) {
-                e.preventDefault();
-            }
+        shield.addEventListener('touchend', (e) => {
+            if (!moved) e.preventDefault();
             shield.style.pointerEvents = 'auto';
         }, { passive: false });
-        shield.addEventListener('click', function(e) {
+        shield.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
         }, true);
+
+        window.addEventListener('wheel', (e) => {
+            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+        }, { passive: true });
     </script>
 </body>
 </html>
