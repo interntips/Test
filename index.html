@@ -30,6 +30,7 @@
             transform-origin: top center;
             position: relative;
             flex-shrink: 0;
+            margin: 0;
         }
 
         iframe {
@@ -58,4 +59,72 @@
             <div class="touch-shield" id="shield"></div>
             <iframe
                 id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=T
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            </iframe>
+        </div>
+    </div>
+
+    <script>
+        const IFRAME_W = 1600;
+        const IFRAME_H = 1806;
+
+        const scaler  = document.getElementById('scaler');
+        const wrapper = document.getElementById('wrapper');
+        const shield  = document.getElementById('shield');
+
+        function applyScale() {
+            const vw = document.documentElement.clientWidth;
+            const scale = Math.min(1, vw / IFRAME_W);
+            scaler.style.transform = `scale(${scale})`;
+            scaler.style.marginLeft = '0';
+            wrapper.style.height = (IFRAME_H * scale) + 'px';
+        }
+
+        applyScale();
+        window.addEventListener('resize', applyScale);
+
+        if ('ontouchstart' in window) {
+            shield.style.display = 'block';
+
+            let moved = false;
+            shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
+            shield.addEventListener('touchmove', () => {
+                moved = true;
+                shield.style.pointerEvents = 'none';
+            }, { passive: true });
+            shield.addEventListener('touchend', (e) => {
+                if (!moved) e.preventDefault();
+                shield.style.pointerEvents = 'auto';
+            }, { passive: false });
+            shield.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+
+        } else {
+            scaler.addEventListener('mouseenter', () => {
+                shield.style.display = 'block';
+            });
+            scaler.addEventListener('mouseleave', () => {
+                shield.style.display = 'none';
+            });
+
+            shield.addEventListener('wheel', (e) => {
+                window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+            }, { passive: true });
+
+            shield.addEventListener('click', (e) => {
+                shield.style.display = 'none';
+                const el = document.elementFromPoint(e.clientX, e.clientY);
+                if (el) el.click();
+                shield.style.display = 'block';
+            });
+        }
+
+        window.addEventListener('wheel', (e) => {
+            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+        }, { passive: true });
+    </script>
+</body>
+</html>
