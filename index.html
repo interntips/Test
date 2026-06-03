@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Fotbolls-VM 2026 - Interntips</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow-y: scroll;
-            overflow-x: hidden;
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
             -webkit-overflow-scrolling: touch;
             background-color: #404040;
         }
-
         .wrapper {
             width: 100%;
             display: flex;
@@ -23,96 +21,63 @@
             position: relative;
             background-color: #404040;
         }
-
-        .iframe-scaler {
-            width: 1600px;
-            height: 1806px;
-            transform-origin: top center;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
+        iframe { 
+            width: 100%; 
+            max-width: 1600px;
+            height: 1806px; 
             border: none;
             display: block;
-            clip-path: inset(4px 39px 120px 3px);
-            pointer-events: none;
+            clip-path: inset(3px 3px 40px 3px);
         }
-
+        
         .touch-shield {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
+            max-width: 1400px;
             height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 10;
             background: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper" id="wrapper">
-        <div class="iframe-scaler" id="scaler">
-            <div class="touch-shield" id="shield"></div>
-            <iframe
-                id="excel-iframe"
-                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-            </iframe>
-        </div>
+    <div class="wrapper">
+        <div class="touch-shield" id="shield"></div>
+        <iframe 
+            id="excel-iframe"
+            src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1" 
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+        </iframe>
     </div>
-
     <script>
-        const IFRAME_W = 1600;
-        const IFRAME_H = 1806;
-
-        const scaler  = document.getElementById('scaler');
-        const wrapper = document.getElementById('wrapper');
-        const shield  = document.getElementById('shield');
-        const iframe  = document.getElementById('excel-iframe');
-
-        function applyScale() {
-            const vw = document.documentElement.clientWidth;
-            const scale = Math.min(1, vw / IFRAME_W);
-            scaler.style.transform = `scale(${scale})`;
-            wrapper.style.height = (IFRAME_H * scale) + 'px';
-        }
-
-        applyScale();
-        window.addEventListener('resize', applyScale);
-
+        const shield = document.getElementById('shield');
         if ('ontouchstart' in window) {
-            // Touch: shield hanterar scroll, klick passerar igenom
-            let moved = false;
-            shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
-            shield.addEventListener('touchmove', () => {
-                moved = true;
-            }, { passive: true });
-            shield.addEventListener('touchend', (e) => {
-                if (!moved) {
-                    // Klick – skicka till iframen
-                    iframe.style.pointerEvents = 'auto';
-                    setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 500);
-                }
-            }, { passive: false });
-
+            shield.style.display = 'block';
         } else {
-            // Dator: shield fångar scroll hela tiden
-            // Vid klick: aktivera iframen tillfälligt
-            shield.addEventListener('click', (e) => {
-                iframe.style.pointerEvents = 'auto';
-                // Simulera klick på iframen
-                const rect = iframe.getBoundingClientRect();
-                setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 1000);
-            });
+            shield.style.display = 'none';
         }
-
-        // Global scroll – fungerar alltid eftersom iframen aldrig får fokus
-        window.addEventListener('wheel', (e) => {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
+        let moved = false;
+        shield.addEventListener('touchstart', function() {
+            moved = false;
         }, { passive: true });
+        shield.addEventListener('touchmove', function() {
+            moved = true;
+            shield.style.pointerEvents = 'none'; 
+        }, { passive: true });
+        shield.addEventListener('touchend', function(e) {
+            if (!moved) {
+                e.preventDefault();
+            }
+            shield.style.pointerEvents = 'auto';
+        }, { passive: false });
+        shield.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }, true);
     </script>
 </body>
 </html>
