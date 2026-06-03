@@ -1,4 +1,4 @@
-html<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -48,6 +48,7 @@ html<!DOCTYPE html>
             height: 100%;
             z-index: 10;
             background: transparent;
+            display: none;
         }
     </style>
 </head>
@@ -55,29 +56,21 @@ html<!DOCTYPE html>
     <div class="wrapper" id="wrapper">
         <div class="iframe-scaler" id="scaler">
             <div class="touch-shield" id="shield"></div>
-            <iframe id="excel-iframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+            <iframe
+                id="excel-iframe"
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!C3%3ACA88&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            </iframe>
         </div>
     </div>
 
     <script>
         const IFRAME_W = 1600;
         const IFRAME_H = 1806;
-        const DESKTOP_BREAKPOINT = 1280;
 
-        const BASE_URL = "https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1";
-        const MOBILE_PARAM = "&Item='LIVE'!C3%3ACA88";
-        const DESKTOP_PARAM = "&rangeid='LIVE'!B3%3ACA78";
-
-        const iframe  = document.getElementById('excel-iframe');
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
         const shield  = document.getElementById('shield');
-
-        let currentMode = null;
-
-        function getMode() {
-            return window.innerWidth >= DESKTOP_BREAKPOINT ? 'desktop' : 'mobile';
-        }
 
         function applyScale() {
             const vw = document.documentElement.clientWidth;
@@ -86,51 +79,37 @@ html<!DOCTYPE html>
             wrapper.style.height = (IFRAME_H * scale) + 'px';
         }
 
-        function updateIframe() {
-            const mode = getMode();
-            if (mode !== currentMode) {
-                currentMode = mode;
-                if (mode === 'desktop') {
-                    iframe.src = BASE_URL + DESKTOP_PARAM;
-                } else {
-                    iframe.src = BASE_URL + MOBILE_PARAM;
-                }
-            }
-        }
-
-        function onResize() {
-            applyScale();
-            updateIframe();
-        }
-
         applyScale();
-        updateIframe();
-        window.addEventListener('resize', onResize);
+        window.addEventListener('resize', applyScale);
 
+        // ── Touch-enheter: shield alltid på ──────────────────────────
         if ('ontouchstart' in window) {
             shield.style.display = 'block';
+
+            let moved = false;
+            shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
+            shield.addEventListener('touchmove', () => {
+                moved = true;
+                shield.style.pointerEvents = 'none';
+            }, { passive: true });
+            shield.addEventListener('touchend', (e) => {
+                if (!moved) e.preventDefault();
+                shield.style.pointerEvents = 'auto';
+            }, { passive: false });
+            shield.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, true);
+
         } else {
-            shield.style.display = 'none';
-        }
+            // ── Dator: shield på när musen är ÖVER iframen ───────────
+            // → scroll-eventet fångas av shield och skickas till sidan
+            // → musen lämnar iframen → shield av → iframen får klick igen
+            scaler.addEventListener('mouseenter', () => {
+                shield.style.display = 'block';
+            });
+            scaler.addEventListener('mouseleave', () => {
+                shield.style.display = 'none';
+            });
 
-        let moved = false;
-        shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
-        shield.addEventListener('touchmove', () => {
-            moved = true;
-            shield.style.pointerEvents = 'none';
-        }, { passive: true });
-        shield.addEventListener('touchend', (e) => {
-            if (!moved) e.preventDefault();
-            shield.style.pointerEvents = 'auto';
-        }, { passive: false });
-        shield.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        }, true);
-
-        window.addEventListener('wheel', (e) => {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
-        }, { passive: true });
-    </script>
-</body>
-</html>
+            shield.addEventListener('wheel', (
