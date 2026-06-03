@@ -30,7 +30,6 @@
             transform-origin: top center;
             position: relative;
             flex-shrink: 0;
-            margin: 0;
         }
 
         iframe {
@@ -39,6 +38,7 @@
             border: none;
             display: block;
             clip-path: inset(3px 3px 40px 3px);
+            pointer-events: none;
         }
 
         .touch-shield {
@@ -49,7 +49,6 @@
             height: 100%;
             z-index: 10;
             background: transparent;
-            display: none;
         }
     </style>
 </head>
@@ -72,12 +71,12 @@
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
         const shield  = document.getElementById('shield');
+        const iframe  = document.getElementById('excel-iframe');
 
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             const scale = Math.min(1, vw / IFRAME_W);
             scaler.style.transform = `scale(${scale})`;
-            scaler.style.marginLeft = '0';
             wrapper.style.height = (IFRAME_H * scale) + 'px';
         }
 
@@ -85,43 +84,32 @@
         window.addEventListener('resize', applyScale);
 
         if ('ontouchstart' in window) {
-            shield.style.display = 'block';
-
+            // Touch: shield hanterar scroll, klick passerar igenom
             let moved = false;
             shield.addEventListener('touchstart', () => { moved = false; }, { passive: true });
             shield.addEventListener('touchmove', () => {
                 moved = true;
-                shield.style.pointerEvents = 'none';
             }, { passive: true });
             shield.addEventListener('touchend', (e) => {
-                if (!moved) e.preventDefault();
-                shield.style.pointerEvents = 'auto';
+                if (!moved) {
+                    // Klick – skicka till iframen
+                    iframe.style.pointerEvents = 'auto';
+                    setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 500);
+                }
             }, { passive: false });
-            shield.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            }, true);
 
         } else {
-            scaler.addEventListener('mouseenter', () => {
-                shield.style.display = 'block';
-            });
-            scaler.addEventListener('mouseleave', () => {
-                shield.style.display = 'none';
-            });
-
-            shield.addEventListener('wheel', (e) => {
-                window.scrollBy({ top: e.deltaY, behavior: 'auto' });
-            }, { passive: true });
-
+            // Dator: shield fångar scroll hela tiden
+            // Vid klick: aktivera iframen tillfälligt
             shield.addEventListener('click', (e) => {
-                shield.style.display = 'none';
-                const el = document.elementFromPoint(e.clientX, e.clientY);
-                if (el) el.click();
-                shield.style.display = 'block';
+                iframe.style.pointerEvents = 'auto';
+                // Simulera klick på iframen
+                const rect = iframe.getBoundingClientRect();
+                setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 1000);
             });
         }
 
+        // Global scroll – fungerar alltid eftersom iframen aldrig får fokus
         window.addEventListener('wheel', (e) => {
             window.scrollBy({ top: e.deltaY, behavior: 'auto' });
         }, { passive: true });
