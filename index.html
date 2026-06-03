@@ -27,7 +27,7 @@
         .iframe-scaler {
             width: 1600px;
             height: 1806px;
-            transform-origin: top center;
+            transform-origin: top left;
             position: relative;
             flex-shrink: 0;
         }
@@ -68,7 +68,7 @@
         const IFRAME_W = 1600;
         const IFRAME_H = 1806;
         const DESKTOP_BREAKPOINT = 1280;
-        const DESKTOP_SCALE_FACTOR = 0.8; // 80% på dator
+        const DESKTOP_SCALE_FACTOR = 0.8;
 
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
@@ -77,16 +77,21 @@
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             const isDesktop = vw >= DESKTOP_BREAKPOINT;
-            const maxScale = isDesktop ? DESKTOP_SCALE_FACTOR : 1;
-            const scale = Math.min(maxScale, vw / IFRAME_W * maxScale);
+            const maxFactor = isDesktop ? DESKTOP_SCALE_FACTOR : 1;
+            const scale = Math.min(maxFactor, (vw / IFRAME_W) * maxFactor);
+
+            // Sätt transform-origin top left och centrera manuellt med marginLeft
             scaler.style.transform = `scale(${scale})`;
+            const scaledW = IFRAME_W * scale;
+            scaler.style.marginLeft = ((vw - scaledW) / 2) + 'px';
+
+            // Rätt höjd på wrapper så inget tomt utrymme under
             wrapper.style.height = (IFRAME_H * scale) + 'px';
         }
 
         applyScale();
         window.addEventListener('resize', applyScale);
 
-        // ── Touch-enheter: shield alltid på ──────────────────────────
         if ('ontouchstart' in window) {
             shield.style.display = 'block';
 
@@ -106,7 +111,6 @@
             }, true);
 
         } else {
-            // ── Dator: shield på när musen är ÖVER iframen ───────────
             scaler.addEventListener('mouseenter', () => {
                 shield.style.display = 'block';
             });
@@ -126,7 +130,6 @@
             });
         }
 
-        // Global wheel-fallback för när musen är utanför iframen
         window.addEventListener('wheel', (e) => {
             window.scrollBy({ top: e.deltaY, behavior: 'auto' });
         }, { passive: true });
