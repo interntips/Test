@@ -78,7 +78,6 @@
         window.addEventListener('resize', applyScale);
 
         if ('ontouchstart' in window) {
-            // Mobil: shield synlig, vid scroll döljs den så iframen hanterar intern scroll
             shield.style.display = 'block';
             iframe.style.pointerEvents = 'auto';
 
@@ -98,7 +97,6 @@
             }, true);
 
         } else {
-            // Dator: shield fångar scroll, klick aktiverar iframen tillfälligt
             shield.style.display = 'block';
             shield.addEventListener('click', (e) => {
                 iframe.style.pointerEvents = 'auto';
@@ -106,7 +104,6 @@
             });
         }
 
-        // Global scroll med mushjulet på dator
         window.addEventListener('wheel', (e) => {
             window.scrollBy({ top: e.deltaY, behavior: 'auto' });
         }, { passive: true });
