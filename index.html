@@ -70,7 +70,6 @@
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             if (vw >= DESKTOP_BREAKPOINT) {
-                // Dator: scaler används
                 scaler.style.width = '1600px';
                 scaler.style.height = '1806px';
                 const scale = Math.min(1, vw / IFRAME_W);
@@ -79,8 +78,8 @@
                 wrapper.style.justifyContent = 'center';
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
+                iframe.style.clipPath = 'inset(4px 39px 120px 3px)';
             } else {
-                // Mobil: scaler neutraliseras, iframe tar full skärmbredd och hög höjd
                 scaler.style.width = '100vw';
                 scaler.style.height = '100vh';
                 scaler.style.transform = 'none';
@@ -88,6 +87,7 @@
                 wrapper.style.justifyContent = 'flex-start';
                 iframe.style.width = '100vw';
                 iframe.style.height = '100vh';
+                iframe.style.clipPath = 'none';
             }
         }
         applyScale();
