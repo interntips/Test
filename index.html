@@ -34,7 +34,6 @@
             border: none;
             display: block;
             clip-path: inset(4px 39px 120px 3px);
-            /* pointer-events hanteras av JS istället */
         }
         .touch-shield {
             position: absolute;
@@ -74,40 +73,23 @@
                 const scale = Math.min(1, vw / IFRAME_W);
                 scaler.style.transform = `scale(${scale})`;
                 wrapper.style.height = (IFRAME_H * scale) + 'px';
+                wrapper.style.justifyContent = 'center';
             } else {
                 scaler.style.transform = 'none';
                 wrapper.style.height = '';
+                wrapper.style.justifyContent = 'flex-start';
             }
         }
         applyScale();
         window.addEventListener('resize', applyScale);
 
         if ('ontouchstart' in window) {
-            // Mobil: iframe får ta emot touch, shield blockerar bara klick
+            // Mobil: inget shield, iframen hanterar allt själv
+            shield.style.display = 'none';
             iframe.style.pointerEvents = 'auto';
-            shield.style.display = 'block';
-
-            let moved = false;
-            shield.addEventListener('touchstart', function() {
-                moved = false;
-            }, { passive: true });
-            shield.addEventListener('touchmove', function() {
-                moved = true;
-                shield.style.pointerEvents = 'none';
-            }, { passive: true });
-            shield.addEventListener('touchend', function(e) {
-                if (!moved) {
-                    e.preventDefault();
-                }
-                shield.style.pointerEvents = 'auto';
-            }, { passive: false });
-            shield.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }, true);
 
         } else {
-            // Dator: iframe får ingen pointer-events, shield sköter allt
+            // Dator: shield fångar scroll, klick aktiverar iframen tillfälligt
             iframe.style.pointerEvents = 'none';
             shield.style.display = 'block';
             shield.addEventListener('click', (e) => {
