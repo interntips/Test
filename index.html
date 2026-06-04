@@ -70,26 +70,33 @@
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             if (vw >= DESKTOP_BREAKPOINT) {
+                // Dator: scaler används
+                scaler.style.width = '1600px';
+                scaler.style.height = '1806px';
                 const scale = Math.min(1, vw / IFRAME_W);
                 scaler.style.transform = `scale(${scale})`;
                 wrapper.style.height = (IFRAME_H * scale) + 'px';
                 wrapper.style.justifyContent = 'center';
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
             } else {
+                // Mobil: scaler neutraliseras, iframe tar full skärmbredd och hög höjd
+                scaler.style.width = '100vw';
+                scaler.style.height = '100vh';
                 scaler.style.transform = 'none';
-                wrapper.style.height = '';
+                wrapper.style.height = '100vh';
                 wrapper.style.justifyContent = 'flex-start';
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
             }
         }
         applyScale();
         window.addEventListener('resize', applyScale);
 
         if ('ontouchstart' in window) {
-            // Mobil: inget shield, iframen hanterar allt själv
             shield.style.display = 'none';
             iframe.style.pointerEvents = 'auto';
-
         } else {
-            // Dator: shield fångar scroll, klick aktiverar iframen tillfälligt
             iframe.style.pointerEvents = 'none';
             shield.style.display = 'block';
             shield.addEventListener('click', (e) => {
