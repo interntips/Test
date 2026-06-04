@@ -1,3 +1,107 @@
+Skip to content
+interntips
+Test
+Repository navigation
+Code
+Issues
+Pull requests
+Agents
+Actions
+Projects
+Wiki
+Security and quality
+Insights
+Settings
+Files
+Go to file
+t
+T
+README.md
+index.html
+test
+tester
+Test
+/
+index.html
+in
+main
+
+Edit
+
+Preview
+Indent mode
+
+Spaces
+Indent size
+
+4
+Line wrap mode
+
+No wrap
+Editing index.html file contents
+  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,65 +165,4 @@
     </div>
     <script>
         const IFRAME_W = 1600;
-        const IFRAME_H = 1806;
-        const DESKTOP_BREAKPOINT = 1280;
-        const scaler  = document.getElementById('scaler');
-        const wrapper = document.getElementById('wrapper');
-        const shield  = document.getElementById('shield');
-        const iframe  = document.getElementById('excel-iframe');
-
-        function applyScale() {
-            const vw = document.documentElement.clientWidth;
-            if (vw >= DESKTOP_BREAKPOINT) {
-                // Dator: skala ner
-                const scale = Math.min(1, vw / IFRAME_W);
-                scaler.style.transform = `scale(${scale})`;
-                wrapper.style.height = (IFRAME_H * scale) + 'px';
-            } else {
-                // Mobil: ingen skalning, full storlek
-                scaler.style.transform = 'none';
-                wrapper.style.height = '';
-            }
-        }
-        applyScale();
-        window.addEventListener('resize', applyScale);
-
-        if ('ontouchstart' in window) {
-            // Mobil: original shield-logik
-            shield.style.display = 'block';
-            iframe.style.pointerEvents = 'auto';
-
-            let moved = false;
-            shield.addEventListener('touchstart', function() {
-                moved = false;
-            }, { passive: true });
-            shield.addEventListener('touchmove', function() {
-                moved = true;
-                shield.style.pointerEvents = 'none';
-            }, { passive: true });
-            shield.addEventListener('touchend', function(e) {
-                if (!moved) {
-                    e.preventDefault();
-                }
-                shield.style.pointerEvents = 'auto';
-            }, { passive: false });
-            shield.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }, true);
-
-        } else {
-            // Dator: shield fångar scroll, klick aktiverar iframen tillfälligt
-            shield.style.display = 'block';
-            shield.addEventListener('click', (e) => {
-                iframe.style.pointerEvents = 'auto';
-                setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 1000);
-            });
-        }
-
-        window.addEventListener('wheel', (e) => {
-            window.scrollBy({ top: e.deltaY, behavior: 'auto' });
-        }, { passive: true });
-    </script>
-</body>
-</html>
+Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
