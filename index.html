@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.09, user-scalable=yes">
     <title>Fotbolls-VM 2026 - Interntips</title>
     <style>
         html, body {
@@ -17,18 +17,23 @@
         .wrapper {
             width: 100%;
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             position: relative;
             background-color: #404040;
         }
         .iframe-scaler {
-            transform-origin: top left;
+            width: 1600px;
+            height: 1806px;
+            transform-origin: top center;
             position: relative;
             flex-shrink: 0;
         }
         iframe {
+            width: 100%;
+            height: 100%;
             border: none;
             display: block;
+            clip-path: inset(4px 39px 120px 3px);
         }
         .touch-shield {
             position: absolute;
@@ -57,10 +62,6 @@
         const IFRAME_W = 1600;
         const IFRAME_H = 1806;
         const DESKTOP_BREAKPOINT = 1280;
-        const MOBILE_BASE_W = 393; // Pixel 8 bredd som referens
-        const MOBILE_IFRAME_W = 1600;
-        const MOBILE_IFRAME_H = 1806;
-
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
         const shield  = document.getElementById('shield');
@@ -69,28 +70,23 @@
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             if (vw >= DESKTOP_BREAKPOINT) {
-                // Dator
                 scaler.style.width = '1600px';
                 scaler.style.height = '1806px';
-                scaler.style.transformOrigin = 'top center';
-                iframe.style.width = '1600px';
-                iframe.style.height = '1806px';
                 const scale = Math.min(1, vw / IFRAME_W);
                 scaler.style.transform = `scale(${scale})`;
                 wrapper.style.height = (IFRAME_H * scale) + 'px';
                 wrapper.style.justifyContent = 'center';
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
                 iframe.style.clipPath = 'inset(4px 39px 120px 3px)';
             } else {
-                // Mobil: skala så att alla mobiler ser ut som Pixel 8
-                const scale = vw / MOBILE_BASE_W;
-                scaler.style.transformOrigin = 'top left';
-                scaler.style.width = MOBILE_IFRAME_W + 'px';
-                scaler.style.height = MOBILE_IFRAME_H + 'px';
-                scaler.style.transform = `scale(${scale})`;
-                iframe.style.width = MOBILE_IFRAME_W + 'px';
-                iframe.style.height = MOBILE_IFRAME_H + 'px';
-                wrapper.style.height = (MOBILE_IFRAME_H * scale) + 'px';
+                scaler.style.width = '100vw';
+                scaler.style.height = '100vh';
+                scaler.style.transform = 'none';
+                wrapper.style.height = '100vh';
                 wrapper.style.justifyContent = 'flex-start';
+                iframe.style.width = '100vw';
+                iframe.style.height = '100vh';
                 iframe.style.clipPath = 'none';
             }
         }
