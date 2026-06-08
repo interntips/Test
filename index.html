@@ -23,7 +23,7 @@
         }
         .iframe-scaler {
             width: 1600px;
-            height: 1806px;
+            height: 2046px;
             transform-origin: top center;
             position: relative;
             flex-shrink: 0;
@@ -60,18 +60,17 @@
     </div>
     <script>
         const IFRAME_W = 1600;
-        const IFRAME_H = 1806;
+        const IFRAME_H = 2046;
         const DESKTOP_BREAKPOINT = 1280;
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
         const shield  = document.getElementById('shield');
         const iframe  = document.getElementById('excel-iframe');
-
         function applyScale() {
             const vw = document.documentElement.clientWidth;
             if (vw >= DESKTOP_BREAKPOINT) {
                 scaler.style.width = '1600px';
-                scaler.style.height = '1806px';
+                scaler.style.height = '2046px';
                 const scale = Math.min(1, vw / IFRAME_W);
                 scaler.style.transform = `scale(${scale})`;
                 wrapper.style.height = (IFRAME_H * scale) + 'px';
@@ -92,7 +91,6 @@
         }
         applyScale();
         window.addEventListener('resize', applyScale);
-
         if ('ontouchstart' in window) {
             shield.style.display = 'none';
             iframe.style.pointerEvents = 'auto';
@@ -104,7 +102,6 @@
                 setTimeout(() => { iframe.style.pointerEvents = 'none'; }, 1000);
             });
         }
-
         window.addEventListener('wheel', (e) => {
             window.scrollBy({ top: e.deltaY, behavior: 'auto' });
         }, { passive: true });
