@@ -23,7 +23,7 @@
         }
         .iframe-scaler {
             width: 1600px;
-            height: 2046px;
+            height: 2366px;
             transform-origin: top center;
             position: relative;
             flex-shrink: 0;
@@ -60,7 +60,7 @@
     </div>
     <script>
         const IFRAME_W = 1600;
-        const IFRAME_H = 2046;
+        const IFRAME_H = 2366;
         const DESKTOP_BREAKPOINT = 1280;
         const scaler  = document.getElementById('scaler');
         const wrapper = document.getElementById('wrapper');
@@ -70,23 +70,23 @@
             const vw = document.documentElement.clientWidth;
             if (vw >= DESKTOP_BREAKPOINT) {
                 scaler.style.width = '1600px';
-                scaler.style.height = '2046px';
+                scaler.style.height = '2366px';
                 const scale = Math.min(1, vw / IFRAME_W);
                 scaler.style.transform = `scale(${scale})`;
                 wrapper.style.height = (IFRAME_H * scale) + 'px';
                 wrapper.style.justifyContent = 'center';
                 iframe.style.width = '100%';
                 iframe.style.height = '100%';
-                iframe.style.clipPath = 'inset(4px 39px -260px 3px)';
+                iframe.style.clipPath = 'inset(4px 39px 60px 3px)';
             } else {
                 scaler.style.width = '100vw';
-                scaler.style.height = '100vh';
+                scaler.style.height = '2526px';
                 scaler.style.transform = 'none';
-                wrapper.style.height = '100vh';
+                wrapper.style.height = '2526px';
                 wrapper.style.justifyContent = 'flex-start';
                 iframe.style.width = '100vw';
-                iframe.style.height = '100vh';
-                iframe.style.clipPath = 'inset(0px 0px -580px 0px)';
+                iframe.style.height = '2526px';
+                iframe.style.clipPath = 'inset(0px 0px -100px 0px)';
             }
         }
         applyScale();
