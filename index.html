@@ -170,6 +170,9 @@
                 overlay.style.display = 'none';
                 infoBox.style.display = 'none';
             }, 300);
+            
+            // DENNA RAD FIXAR PROBLEMET:
+            window.scrollTo(0, 0); 
         }
 
         overlay.addEventListener('click', closeOverlay);
