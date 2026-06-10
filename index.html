@@ -88,8 +88,7 @@
             font-size: 16px;
             line-height: 1.6;
             padding: 24px;
-            width: 85%;
-            max-width: 450px;
+            width: 60%;
             box-sizing: border-box;
             border-radius: 4px;
             text-align: center;
@@ -154,12 +153,6 @@
         const infoBox  = document.getElementById('infoBox');
         const closeBtn = document.getElementById('closeBtn');
 
-// Centrera info-box baserat på faktisk skärmbredd
-infoBox.style.left = (window.innerWidth / 2) + 'px';
-window.addEventListener('resize', () => {
-    infoBox.style.left = (window.innerWidth / 2) + 'px';
-});
-
         iframe.addEventListener('load', () => {
             setTimeout(() => {
                 loader.style.opacity = '0';
@@ -198,12 +191,12 @@ window.addEventListener('resize', () => {
                 iframe.style.height = '100%';
                 iframe.style.clipPath = 'inset(4px 34px 360px 3px)';
             } else {
-                scaler.style.width = '105vw';
+                scaler.style.width = '100vw';
                 scaler.style.height = 'calc(100vh + 140px)';
                 scaler.style.transform = 'none';
                 wrapper.style.height = 'calc(100vh + 140px)';
                 wrapper.style.justifyContent = 'flex-start';
-                iframe.style.width = '105vw';
+                iframe.style.width = '100vw';
                 iframe.style.height = 'calc(100vh + 140px)';
                 iframe.style.clipPath = 'none';
             }
