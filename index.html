@@ -192,14 +192,16 @@
                 iframe.style.height = '100%';
                 iframe.style.clipPath = 'inset(4px 34px 360px 3px)';
             } else {
-                scaler.style.width = '100vw';
+                // Skapar 120px extra utrymme i bredd så att sista kolumnen tvingas fram
+                scaler.style.width = 'calc(100vw + 120px)';
                 scaler.style.height = 'calc(100vh + 140px)';
                 scaler.style.transform = 'none';
                 wrapper.style.height = 'calc(100vh + 140px)';
                 wrapper.style.justifyContent = 'flex-start';
-                iframe.style.width = '100vw';
+                iframe.style.width = 'calc(100vw + 120px)';
                 iframe.style.height = 'calc(100vh + 140px)';
-                iframe.style.clipPath = 'inset(0px -80px 0px 0px)';
+                // Negativt värde matchar bredden för att visa kolumnen
+                iframe.style.clipPath = 'inset(0px -120px 0px 0px)';
             }
         }
         applyScale();
