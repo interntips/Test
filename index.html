@@ -75,8 +75,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100vw; /* Låser till skärmens exakta bredd */
+            height: 100vh; /* Låser till skärmens exakta höjd */
             background: transparent;
             z-index: 200;
         }
@@ -87,16 +87,16 @@
             font-family: sans-serif;
             font-size: 16px;
             line-height: 1.6;
-            padding: 32px 24px 24px;
-            width: 60%;
-            max-width: 500px; /* Gör att rutan inte blir jättebred på datorer */
-            box-sizing: border-box; /* Hindrar padding från att förstöra bredden */
+            padding: 24px;
+            width: 85%; /* Tar upp 85% av den synliga skärmen på mobilen */
+            max-width: 450px; /* Blir aldrig bredare än så här på datorn */
+            box-sizing: border-box;
             border-radius: 4px;
             text-align: center;
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Centrerar stenhårt i det synliga fönstret */
             z-index: 201;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
         }
