@@ -154,6 +154,12 @@
         const infoBox  = document.getElementById('infoBox');
         const closeBtn = document.getElementById('closeBtn');
 
+// Centrera info-box baserat på faktisk skärmbredd
+infoBox.style.left = (window.innerWidth / 2) + 'px';
+window.addEventListener('resize', () => {
+    infoBox.style.left = (window.innerWidth / 2) + 'px';
+});
+
         iframe.addEventListener('load', () => {
             setTimeout(() => {
                 loader.style.opacity = '0';
