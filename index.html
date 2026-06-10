@@ -75,8 +75,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; /* Låser till skärmens exakta bredd */
+            height: 100vh; /* Låser till skärmens exakta höjd */
             background: transparent;
             z-index: 200;
         }
@@ -88,15 +88,15 @@
             font-size: 16px;
             line-height: 1.6;
             padding: 24px;
-            width: 85%;
-            max-width: 450px;
+            width: 85%; /* Tar upp 85% av den synliga skärmen på mobilen */
+            max-width: 450px; /* Blir aldrig bredare än så här på datorn */
             box-sizing: border-box;
             border-radius: 4px;
             text-align: center;
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Centrerar stenhårt i det synliga fönstret */
             z-index: 201;
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
         }
@@ -136,7 +136,7 @@
             <div class="touch-shield" id="shield"></div>
             <iframe
                 id="excel-iframe"
-                src="https://1drv.ms"
+                src="https://1drv.ms/x/c/e8830cf447bdf3d5/IQRCu4LbUSNUT6SOXII_dut2AeY16NyzBwAVM06qUXYjOrc?em=2&wdAllowInteractivity=True&Item='LIVE'!B3%3ACA120&wdHideGridlines=True&wdHideHeaders=True&wdInConfigurator=True&nav=1"
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
             </iframe>
         </div>
@@ -170,6 +170,9 @@
                 overlay.style.display = 'none';
                 infoBox.style.display = 'none';
             }, 300);
+            
+            // DENNA RAD FIXAR PROBLEMET:
+            window.scrollTo(0, 0); 
         }
 
         overlay.addEventListener('click', closeOverlay);
@@ -192,14 +195,16 @@
                 iframe.style.height = '100%';
                 iframe.style.clipPath = 'inset(4px 34px 360px 3px)';
             } else {
-                scaler.style.width = '100vw';
+                // Skapar 120px extra utrymme i bredd så att sista kolumnen tvingas fram
+                scaler.style.width = 'calc(100vw + 120px)';
                 scaler.style.height = 'calc(100vh + 140px)';
                 scaler.style.transform = 'none';
                 wrapper.style.height = 'calc(100vh + 140px)';
                 wrapper.style.justifyContent = 'flex-start';
-                iframe.style.width = '100vw';
+                iframe.style.width = 'calc(100vw + 120px)';
                 iframe.style.height = 'calc(100vh + 140px)';
-                iframe.style.clipPath = 'inset(0px -60px 0px 0px)';
+                // Negativt värde matchar bredden för att visa kolumnen
+                iframe.style.clipPath = 'inset(0px -120px 0px 0px)';
             }
         }
         applyScale();
@@ -222,7 +227,7 @@
         }, { passive: true });
     </script>
     <!-- HÄR ÄR DIN GOATCOUNTER-KOD -->
-    <script data-goatcounter="https://goatcounter.com"
+    <script data-goatcounter="https://midtbank.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
