@@ -75,8 +75,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            right: 0;
+            bottom: 0;
             background: transparent;
             z-index: 200;
         }
@@ -89,6 +89,8 @@
             line-height: 1.6;
             padding: 32px 24px 24px;
             width: 60%;
+            max-width: 500px; /* Gör att rutan inte blir jättebred på datorer */
+            box-sizing: border-box; /* Hindrar padding från att förstöra bredden */
             border-radius: 4px;
             text-align: center;
             position: fixed;
